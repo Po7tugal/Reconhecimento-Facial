@@ -1,0 +1,28 @@
+{
+  "name": "reconhecimento-facial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Po7tugal/Reconhecimento-Facial.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Po7tugal/Reconhecimento-Facial/issues"
+  },
+  "homepage": "https://github.com/Po7tugal/Reconhecimento-Facial#readme",
+  "dependencies": {
+    "@vladmandic/face-api": "^1.7.15",
+    "canvas": "^3.2.3",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "multer": "^2.1.1"
+  }
+}
