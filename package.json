@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Po7tugal/Reconhecimento-Facial#readme",
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "@vladmandic/face-api": "^1.7.15",
     "canvas": "^3.2.3",
     "cors": "^2.8.6",
