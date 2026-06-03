@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reconhecimento de Idade</title>
+  <link rel="stylesheet" href="imagemReconhecimento.css">
+</head>
+<body>
+
+  <header>
+    <h1>Reconhecimento Facial</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="imagemReconhecimento.html">Reconhecimento Idade</a></li>
+      <li><a href="volumeInterativo.html">Volume Interativo</a></li>
+      <li><a href="elementos.html">Elementos</a></li>
+    </ul>
+  </header>
+
+  <h2>Conteúdo Restrito</h2>
+
+  <div class="card">
+
+    <div class="foto">
+      <img id="imagem" src="images/deadpool_man.png" class="borrada" alt="Imagem restrita" />
+      <div id="censura" class="censura">Conteúdo sensível</div>
+    </div>
+
+    <button class="btn" onclick="mostrarPopup()">Ver Imagem</button>
+
+  </div>
+
+  <!-- Popup de confirmação -->
+  <div id="popup" class="popup">
+    <div class="box">
+      <p>Confirmas que tens idade suficiente para ver este conteúdo?</p>
+      <div class="actions">
+        <button class="btn" onclick="confirmar()">Confirmar</button>
+        <button class="btn btn-outline" onclick="fecharPopup()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mostra o popup de confirmação
+    function mostrarPopup() {
+      document.getElementById("popup").style.display = "flex";
+    }
+
+    // Fecha o popup sem fazer nada
+    function fecharPopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    // Redireciona para a verificação facial
+    function confirmar() {
+      window.location.href = "verificacao.html";
+    }
+
+    // Ao carregar a página, verifica se já foi verificado antes
+    window.onload = function () {
+      const adulto = sessionStorage.getItem("adulto");
+
+      if (adulto === "true") {
+        document.getElementById("censura").style.display = "none";
+        document.getElementById("imagem").classList.remove("borrada");
+      }
+    };
+  </script>
+
+</body>
+</html>

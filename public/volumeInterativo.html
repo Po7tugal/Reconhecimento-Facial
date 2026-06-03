@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volume Interativo</title>
+  <link rel="stylesheet" href="volumeInterativo.css">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Reconhecimento Facial</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="imagemReconhecimento.html">Reconhecimento Idade</a></li>
+      <li><a href="volumeInterativo.html">Volume Interativo</a></li>
+      <li><a href="elementos.html">Elementos</a></li>
+    </ul>
+  </header>
+
+  <h2>Controlo de Volume por Gestos</h2>
+
+  <div class="card">
+
+    <video id="video" autoplay muted playsinline></video>
+
+    <div id="player"></div>
+
+    <!-- Barra de volume -->
+    <div class="volume-panel">
+      <span class="volume-label">Volume</span>
+      <div class="volume-bar-track">
+        <div class="volume-bar-fill" id="volBar"></div>
+      </div>
+      <span class="volume-number"><span id="volNum">100</span>%</span>
+    </div>
+
+    <p class="status">Estado: <span id="statusTxt">A carregar...</span></p>
+
+    <audio id="audio" src="musica.mp3" loop></audio>
+
+  </div>
+
+  <script>
+    const video = document.getElementById("video");
+    const audio = document.getElementById("audio");
+    const volBar = document.getElementById("volBar");
+    const volNum = document.getElementById("volNum");
+    const statusTxt = document.getElementById("statusTxt");
+
+    // Atualiza o volume do áudio e do YouTube
+    function definirVolume(v) {
+      v = Math.max(0, Math.min(1, v));
+      audio.volume = v;
+
+      if (window.ytPlayer && window.ytPlayer.setVolume) {
+        window.ytPlayer.setVolume(v * 100);
+      }
+
+      volBar.style.width = (v * 100) + "%";
+      volNum.textContent = Math.round(v * 100);
+    }
+
+    // Inicia o áudio local (precisa de clique do utilizador)
+    function iniciarAudio() {
+      audio.play();
+      document.getElementById("startBtn").style.display = "none";
+    }
+
+    // Liga o YouTube quando a API estiver pronta
+    window.onYouTubeIframeAPIReady = function () {
+      window.ytPlayer = new YT.Player("player", {
+        width: 480,
+        height: 270,
+        videoId: "i7TTSzfs2kw",
+        playerVars: { autoplay: 1, controls: 1 }
+      });
+    };
+
+    // Configura o MediaPipe Hands
+    const hands = new Hands({
+      locateFile: (f) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 1,
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.6
+    });
+
+    // Quando a MediaPipe devolve resultados
+    hands.onResults((results) => {
+      if (!results.multiHandLandmarks || results.multiHandLandmarks.length === 0) {
+        statusTxt.textContent = "Sem mão detetada";
+        return;
+      }
+
+      const hand = results.multiHandLandmarks[0];
+
+      // Usa o ponto 9 (centro da palma) para calcular o volume
+      // Quanto mais alta a mão, maior o volume
+      const y = hand[9].y;
+      const yMin = 0.15;
+      const yMax = 0.85;
+      const volume = 1 - ((y - yMin) / (yMax - yMin));
+
+      definirVolume(volume);
+      statusTxt.textContent = "Mão detetada ✓";
+    });
+
+    // Liga a câmara e começa a enviar frames para a MediaPipe
+    async function ligarCamera() {
+      statusTxt.textContent = "A aceder à câmara...";
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 480, height: 360 }
+      });
+
+      video.srcObject = stream;
+
+      await new Promise((res) =>
+        video.addEventListener("loadeddata", res, { once: true })
+      );
+
+      const camera = new Camera(video, {
+        onFrame: async () => {
+          await hands.send({ image: video });
+        },
+        width: 480,
+        height: 360
+      });
+
+      camera.start();
+      statusTxt.textContent = "Pronto — move a mão para controlar o volume";
+    }
+
+    ligarCamera();
+  </script>
+
+</body>
+</html>

@@ -105,20 +105,40 @@ h2 {
 }
 
 /* ============================
-   VÍDEO / CÂMARA
+   IMAGEM CENSURADA
    ============================ */
 
-video {
-  width: 480px;
-  height: 360px;
+.foto {
+  position: relative;
+  display: inline-block;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: #000;
+  overflow: hidden;
+}
+
+.foto img {
   display: block;
+  width: 320px;
+  border-radius: var(--radius);
+}
+
+.foto img.borrada {
+  filter: blur(16px);
+}
+
+.censura {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
 }
 
 /* ============================
-   BOTÃO
+   BOTÕES
    ============================ */
 
 .btn {
@@ -139,16 +159,52 @@ video {
   background: var(--accent-hover);
 }
 
-/* ============================
-   STATUS
-   ============================ */
-
-.status {
-  font-size: 0.8rem;
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
   color: var(--text-muted);
-  letter-spacing: 0.05em;
 }
 
-.status span {
+.btn-outline:hover {
+  border-color: var(--accent);
   color: var(--accent);
+  background: transparent;
+}
+
+/* ============================
+   POPUP / MODAL
+   ============================ */
+
+.popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.popup .box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 360px;
+  width: 90%;
+}
+
+.popup .box p {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.popup .box .actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }

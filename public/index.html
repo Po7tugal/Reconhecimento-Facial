@@ -1,66 +1,55 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="pt">
 
 <head>
-
-
   <meta charset="UTF-8">
-
-
-  <title>Reconhecimento Facial Alunos</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reconhecimento Facial</title>
   <link rel="stylesheet" href="index.css">
-
 </head>
 
-
 <body>
-  <div class="foto">
-    <img src="images/deadpool_man.png" class="borrada" />
 
-    <div id="censura" class="censura">
-      Conteúdo sensível
-    </div>
+  <header>
+    <h1>Reconhecimento Facial</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="imagemReconhecimento.html">Reconhecimento Idade</a></li>
+      <li><a href="volumeInterativo.html">Volume Interativo</a></li>
+      <li><a href="elementos.html">Elementos</a></li>
+    </ul>
+  </header>
+
+  <h1>Bem-vindo ao Projeto</h1>
+
+  <p>
+    Nesse projeto avaliativo, tentei fazer projetos interativos usando a webcam
+  </p>
+
+  <div class="card">
+
+    <video id="video" autoplay muted></video>
+
   </div>
 
-  <div>
-    <button class="botao-ver" onclick="aviso()">Ver Imagem</button>
+  <script>
+    const video = document.getElementById("video");
 
-    <div id="popup" class="popup">
-      <div class="box">
-        <p>Verificar que tem idade suficiente?</p>
-
-        <button class="botao-confirmar" onclick="confirmar()">Confirmar</button>
-        <button class="botao-fechar" onclick="fechar()">Cancelar</button>
-      </div>
-    </div>
-
-    <script>
-      function aviso() {
-        document.getElementById("popup").style.display = "flex";
+    async function ligarCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+      } catch (err) {
+        console.error("Erro ao aceder à câmara:", err);
       }
+    }
 
-      function fechar() {
-        document.getElementById("popup").style.display = "none";
-      }
+    ligarCamera();
+  </script>
 
-      function confirmar() {
-        window.location.href = "verificacao.html";
-      }
-
-      window.onload = function () {
-        const liberado = sessionStorage.getItem("adulto");
-
-        if (liberado === "true") {
-          document.getElementById("censura").style.display = "none";
-          document.querySelector(".foto img").classList.remove("borrada");
-        }
-      };
-    </script>
-  </div>
 </body>
 
+</html>
+</body>
 
 </html>

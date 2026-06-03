@@ -118,25 +118,48 @@ video {
 }
 
 /* ============================
-   BOTÃO
+   BARRA DE VOLUME
    ============================ */
 
-.btn {
-  display: inline-block;
-  padding: 10px 22px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
+.volume-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  font-size: 0.9rem;
-  font-family: var(--font);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.2s;
+  padding: 12px 24px;
 }
 
-.btn:hover {
-  background: var(--accent-hover);
+.volume-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.volume-bar-track {
+  width: 200px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.volume-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.1s ease;
+}
+
+.volume-number {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 44px;
+  text-align: right;
 }
 
 /* ============================

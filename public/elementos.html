@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elementos</title>
+  <link rel="stylesheet" href="elementos.css">
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Reconhecimento Facial</h1>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="imagemReconhecimento.html">Reconhecimento Idade</a></li>
+      <li><a href="volumeInterativo.html">Volume Interativo</a></li>
+      <li><a href="elementos.html">Elementos</a></li>
+    </ul>
+  </header>
+
+  <h2>Controlo de Elementos por Gestos</h2>
+
+  <div class="card">
+
+    <video id="video" autoplay playsinline></video>
+
+    <img id="elementoImg" src="images/agua.png" alt="Elemento" id="elementoImg">
+
+    <p class="status">
+      Dedos: <span id="numDedos">—</span> &nbsp;|&nbsp;
+      Elemento: <span id="nomeElemento">—</span>
+    </p>
+
+  </div>
+
+  <script>
+    const video = document.getElementById("video");
+    const img = document.getElementById("elementoImg");
+    const numDedosEl = document.getElementById("numDedos");
+    const nomeElementoEl = document.getElementById("nomeElemento");
+
+    // Imagens e cores de cada elemento
+    const elementos = {
+      agua: "images/agua.png",
+      fogo: "images/fogo.png",
+      ar: "images/ar.png",
+      terra: "images/terra.png"
+    };
+
+    const cores = {
+      agua: "#3ea6ff",
+      fogo: "#ff3030",
+      terra: "#c77b30",
+      ar: "#aaaaaa"
+    };
+
+    // Configura o MediaPipe Hands
+    const hands = new Hands({
+      locateFile: (file) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+    });
+
+    hands.setOptions({
+      maxNumHands: 1,
+      modelComplexity: 0,
+      minDetectionConfidence: 0.6,
+      minTrackingConfidence: 0.6
+    });
+
+    // Conta quantos dedos estão levantados
+    function contarDedos(hand) {
+      let dedos = 0;
+      const pontas = [8, 12, 16, 20];
+
+      // Dedos indicador, médio, anelar, mindinho
+      for (let i = 0; i < pontas.length; i++) {
+        if (hand[pontas[i]].y < hand[pontas[i] - 2].y) {
+          dedos++;
+        }
+      }
+
+      // Polegar
+      if (hand[4].x < hand[2].x) {
+        dedos++;
+      }
+
+      return dedos;
+    }
+
+    // Quando a MediaPipe devolve resultados
+    hands.onResults((results) => {
+      const hand = results.multiHandLandmarks?.[0];
+      if (!hand) return;
+
+      const dedos = contarDedos(hand);
+
+      // Escolhe o elemento com base no número de dedos
+      let elemento = "terra";
+      if (dedos === 5) elemento = "agua";
+      else if (dedos === 0) elemento = "fogo";
+      else if (dedos === 1) elemento = "ar";
+      else if (dedos === 2) elemento = "terra";
+
+      // Atualiza a imagem e o fundo
+      img.src = elementos[elemento];
+      img.style.filter = `drop-shadow(0 0 20px ${cores[elemento]})`;
+      document.body.style.background =
+        `radial-gradient(circle at center, ${cores[elemento]}22, var(--bg))`;
+
+      // Atualiza o status
+      numDedosEl.textContent = dedos;
+      nomeElementoEl.textContent = elemento.charAt(0).toUpperCase() + elemento.slice(1);
+    });
+
+    // Liga a câmara e começa a enviar frames para a MediaPipe
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+
+        const camera = new Camera(video, {
+          onFrame: async () => {
+            await hands.send({ image: video });
+          },
+          width: 480,
+          height: 360
+        });
+
+        camera.start();
+      });
+  </script>
+
+</body>
+</html>
